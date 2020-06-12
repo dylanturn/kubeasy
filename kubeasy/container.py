@@ -1,11 +1,14 @@
 from __future__ import annotations
+
+from typing import List, Mapping
+
 from imports import k8s
 from cdk8s import Chart
 
 from kubeasy.utils.collections.container_ports import ContainerPorts
 from kubeasy.utils.request_limits import ContainerResources
 from kubeasy.utils.security import SecurityContext
-from kubeasy.utils.networking import ContainerPort
+from kubeasy.utils.networking.container_port import ContainerPort
 from kubeasy.utils.resource import Renderable
 
 
@@ -61,14 +64,13 @@ class Container(Renderable):
 
   # === Networking ===
 
-  def add_port(self, port: int) -> Container:
-    self.ports.append(ContainerPort(port=port))
-    return self
+  def add_port(self, port: int, name: str = None) -> ContainerPort:
+    return self.ports.add_port(name=name, port=port)
 
-  def set_ports(self, ports: list[int]) -> Container:
-    for port in ports:
-      self.add_port(port)
-    return self
+  def add_ports(self, ports: Mapping[str, int]) -> ContainerPorts:
+    for port_name in ports:
+      self.ports.add_port(name=port_name, port=ports[port_name])
+    return self.ports
 
   # === Liveness and Readiness ===
 

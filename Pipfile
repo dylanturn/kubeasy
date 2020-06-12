@@ -8,5 +8,7 @@ verify_ssl = true
 [packages]
 cdk8s = "*"
 
+
 [requires]
 python_version = "3.8"
+jmespath = "0.10.0"

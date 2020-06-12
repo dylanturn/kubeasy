@@ -1,11 +1,23 @@
 from __future__ import annotations
+from enum import Enum
+from typing import List
+
 from imports import k8s
 from cdk8s import Chart
 
 from kubeasy.deployment import Deployment
-from kubeasy.utils.networking import ServiceType, ServicePort
-from kubeasy.utils.collections.service_ports import ServicePorts
 from kubeasy.utils.resource import Renderable
+from kubeasy.utils.networking.service_port import ServicePort
+from kubeasy.utils.collections.service_ports import ServicePorts
+
+
+class ServiceType(Enum):
+  CLUSTERIP = "ClusterIP"
+  LOADBALANCER = "LoadBalancer"
+  NODEPORT = "NodePort"
+
+  def k8s_name(self) -> str:
+    return '{0}'.format(self.value)
 
 
 class Service(Renderable):
@@ -38,9 +50,8 @@ class Service(Renderable):
     self.service_type = service_type
     return self
 
-  def add_port(self, service_port: ServicePort) -> Service:
-    self.ports.add_port(service_port)
-    return self
+  def add_port(self, service_port: ServicePort) -> ServicePort:
+    return self.ports.add_port(service_port)
 
   # Service Labels
 
@@ -64,5 +75,10 @@ class Service(Renderable):
 
   def render(self, chart: Chart) -> k8s.Service:
     self.__load_enforced_configuration()
-    svc_spec = k8s.ServiceSpec(type=self.service_type.k8s_name(), ports=self.ports.render(), selector=self.selector)
+    service_ports = ServicePort.render_port_list(self.ports)
+    svc_spec = k8s.ServiceSpec(type=self.service_type.k8s_name(), ports=service_ports, selector=self.selector)
     return k8s.Service(chart, 'service', spec=svc_spec)
+
+
+
+

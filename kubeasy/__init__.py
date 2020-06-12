@@ -7,9 +7,10 @@ from kubeasy.utils.collections.chart_resource_collection import ChartResourceCol
 from kubeasy.utils.resource import Renderable
 from kubeasy.deployment import Deployment
 from kubeasy.container import Container
-from kubeasy.service import Service
-from kubeasy.ingress import Ingress
-#from kubeasy.volume import Volume
+from kubeasy.service import Service, ServicePort, ServiceType
+from kubeasy.ingress import Ingress, IngressPath
+from kubeasy.volume import Volume
+from typing import Mapping
 
 
 class EasyChart(object):
@@ -36,10 +37,10 @@ class EasyChart(object):
     self.deployment.add_container(new_container)
     return new_container
 
-  #def add_volume(self, name: str) -> Volume:
-  #  new_volume = Volume(name, self.deployment)
-  #  self.deployment.add_volume_mount(new_volume)
-  #  return new_volume
+  def add_volume(self, name: str, labels: Mapping[str, str]) -> Volume:
+    new_volume = Volume(name, labels)
+    self.deployment.add_volume_mount(new_volume)
+    return new_volume
 
   def add_service(self, service_name) -> Service:
     new_service = Service(name=service_name, deployment=self.deployment)
@@ -47,9 +48,9 @@ class EasyChart(object):
     return new_service
 
   def add_ingress(self, name: str, tls: bool = False, labels: dict = None) -> Ingress:
-    new_service_ingress = Ingress(name, tls, labels)
-    self.ingress_collection.add_resource(new_service_ingress)
-    return new_service_ingress
+    new_ingress = Ingress(name, tls, labels)
+    self.ingress_collection.add_resource(new_ingress)
+    return new_ingress
 
   def render(self) -> list:
     app = App()

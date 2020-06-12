@@ -1,4 +1,4 @@
 language: python
-app: python ./main.py
+app: pipenv run python3 main.py
 imports:
   - k8s

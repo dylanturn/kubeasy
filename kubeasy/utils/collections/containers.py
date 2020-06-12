@@ -3,6 +3,7 @@ from __future__ import annotations
 from imports import k8s
 from cdk8s import Chart
 from kubeasy.container import Container
+from typing import Mapping
 
 
 class Containers(list):
@@ -10,8 +11,8 @@ class Containers(list):
     self.append(container)
     return self
 
-  def add_new_container(self, name: str, image: str, tag: str, ports: list[int]) -> Containers:
-    self.append(Container(name, image, tag).set_ports(ports))
+  def add_new_container(self, name: str, image: str, tag: str, ports: Mapping[str, int]) -> Containers:
+    self.append(Container(name, image, tag).add_ports(ports))
     return self
 
   def get_container(self, index) -> Container:
