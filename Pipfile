@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-cdk8s = {version="== 0.24.0", index="pypi"}
+cdk8s = {version="== 0.25.0", index="pypi"}
 jmespath = {version="== 0.10.0", index="pypi"}
 
 
