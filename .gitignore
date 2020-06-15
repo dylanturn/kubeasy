@@ -1,5 +1,7 @@
 .idea/
 env/
+imports/
+Pipfile.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
