@@ -10,10 +10,15 @@ from kubeasy.utils.networking.container_port import ContainerPort
 class ServicePort(object):
 
   def __init__(self, container_port: ContainerPort):
+    self.service_name = None
     self.name = container_port.name
     self.protocol = container_port.protocol
     self.port = container_port.port
 
+  def set_service_name(self, service_name: str) -> ServicePort:
+    self.service_name = service_name
+    return self
+  
   def render(self) -> k8s.ServicePort:
     cont_port_int_string = k8s.IntOrString.from_number(self.port)
     return k8s.ServicePort(name=self.name,

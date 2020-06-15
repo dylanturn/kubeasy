@@ -51,7 +51,7 @@ class Service(Renderable):
     return self
 
   def add_port(self, service_port: ServicePort) -> ServicePort:
-    return self.ports.add_port(service_port)
+    return self.ports.add_port(service_port).set_service_name(self.name)
 
   # Service Labels
 
