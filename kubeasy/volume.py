@@ -13,6 +13,6 @@ class Volume(Renderable):
     self.labels = labels
 
   def render(self, chart: Chart) -> k8s.PersistentVolumeClaim:
-    object_meta = k8s.ObjectMeta(labels=self.labels)
+    object_meta = k8s.ObjectMeta(name=self.name, labels=self.labels)
     persistent_volume_claim_spec = k8s.PersistentVolumeClaimSpec(volume_name=self.name)
     return k8s.PersistentVolumeClaim(chart, name=self.name, metadata=object_meta, spec=persistent_volume_claim_spec)

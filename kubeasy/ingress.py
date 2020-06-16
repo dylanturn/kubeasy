@@ -46,7 +46,7 @@ class Ingress(Renderable):
     return self
 
   def __create_object_meta(self):
-    return k8s.ObjectMeta(labels=self.labels)
+    return k8s.ObjectMeta(name=self.name, labels=self.labels)
 
   def __create_ingress_tls(self, tls_hosts: list = []):
     if self.tls:

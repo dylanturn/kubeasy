@@ -23,7 +23,7 @@ class Deployment(object):
 
     # Use the podspec to create the deployment spec before finally returning the completed K8s Deployment.
     deployment_spec = k8s.DeploymentSpec(replicas=self.replicas, selector=label_selector, template=podspec_template)
-    k8s.Deployment(chart, 'deployment', spec=deployment_spec)
+    k8s.Deployment(chart, 'deployment', metadata=k8s.ObjectMeta(name=self.name), spec=deployment_spec)
     return self
 
   def __init__(self, name: str, namespace: str, environment: str, replicas: int = 1):
