@@ -32,7 +32,7 @@ chart_container_external_port = chart_container.add_port(external_container_port
 
 # ==== SERVICE ====
 # Add a service to the deployment to enable communication from other deployments or services
-chart_service = easy_chart.add_service("test_service")
+chart_service = easy_chart.add_service("test-service")
 
 # Attach service ports to the charts service.
 chart_service_internal_port = chart_service.add_port(kubeasy.ServicePort(chart_container_internal_port))

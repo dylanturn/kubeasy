@@ -3,6 +3,7 @@
 
 ### Getting Started
 ``` bash
+brew install cdk8s
 git clone git@github.com:dylanturn/kubeasy.git
 cd kubeasy
 pipenv install
