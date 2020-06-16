@@ -77,7 +77,8 @@ class Service(Renderable):
     self.__load_enforced_configuration()
     service_ports = ServicePort.render_port_list(self.ports)
     svc_spec = k8s.ServiceSpec(type=self.service_type.k8s_name(), ports=service_ports, selector=self.selector)
-    return k8s.Service(chart, 'service', spec=svc_spec)
+    object_meta = k8s.ObjectMeta(labels=self.labels)
+    return k8s.Service(scope=chart, name=self.name, metadata=object_meta, spec=svc_spec)
 
 
 

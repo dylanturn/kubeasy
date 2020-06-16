@@ -54,7 +54,7 @@ class Deployment(object):
     self.labels["app.kubernetes.io/name"] = self.name
     self.labels["app.kubernetes.io/environment"] = self.environment
 
-    self.match_labels["app.kubernetes.io/deployment"] = self.name
+    self.match_labels["app.kubernetes.io/name"] = self.name
     self.match_labels["app.kubernetes.io/environment"] = self.environment
 
   def set_replicas(self, replicas: int) -> Deployment:

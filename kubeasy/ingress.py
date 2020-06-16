@@ -82,7 +82,7 @@ class Ingress(Renderable):
         ingress_rules.append(k8s.IngressRule(host=host, http=k8s.HttpIngressRuleValue(paths=http_ingress_paths)))
 
     ingress_spec = k8s.IngressSpec(rules=ingress_rules, tls=ingress_tls)
-    return k8s.Ingress(chart, "ingress", metadata=ingress_meta, spec=ingress_spec)
+    return k8s.Ingress(scope=chart, name=self.name, metadata=ingress_meta, spec=ingress_spec)
 
 
 class SimpleIngress(Ingress):
@@ -99,4 +99,4 @@ class SimpleIngress(Ingress):
     ingress_tls = self.__create_ingress_tls([self.name])
     ingress_backend = k8s.IngressBackend(service_name=self.name, service_port=k8s.IntOrString.from_number(self.port))
     ingress_spec = k8s.IngressSpec(backend=ingress_backend, tls=ingress_tls)
-    return k8s.Ingress(chart, "ingress", metadata=ingress_meta, spec=ingress_spec)
+    return k8s.Ingress(scop=chart, name=self.name, metadata=ingress_meta, spec=ingress_spec)

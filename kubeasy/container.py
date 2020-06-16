@@ -64,7 +64,7 @@ class Container(Renderable):
 
   # === Networking ===
 
-  def add_port(self, port: int, name: str = None) -> ContainerPort:
+  def add_port(self, name: str, port: int) -> ContainerPort:
     return self.ports.add_port(name=name, port=port)
 
   def add_ports(self, ports: Mapping[str, int]) -> ContainerPorts:

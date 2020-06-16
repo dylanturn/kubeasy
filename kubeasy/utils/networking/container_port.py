@@ -3,9 +3,9 @@ from imports import k8s
 
 
 class ContainerPort(object):
-  def __init__(self, name: str = None, protocol: str = None, port: int = None):
+  def __init__(self, name: str, port: int, protocol: str = None):
     self.name = name
-    self.protocol = protocol
+    self.protocol = protocol.upper()
     self.port = port
 
   def create_service(self):

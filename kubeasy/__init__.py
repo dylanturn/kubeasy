@@ -1,4 +1,6 @@
 from __future__ import annotations
+import yaml
+import json
 
 from cdk8s import App, Chart
 from constructs import Construct
@@ -55,7 +57,12 @@ class EasyChart(object):
   def render(self) -> list:
     app = App()
     combined_resource_collection = ChartResourceCollection.combine([self.service_collection, self.ingress_collection])
-    return self.__EasyChart(app, self.deployment, combined_resource_collection).to_json()
+    chart_json = self.__EasyChart(app, self.deployment, combined_resource_collection).to_json()
+
+    yaml_manifest = ""
+    for manifest in chart_json:
+      yaml_manifest += f"---\n{yaml.dump(yaml.load(json.dumps(manifest), Loader=yaml.FullLoader))}"
+    return yaml_manifest
 
   class __EasyChart(Chart):
     def __init__(self, scope: Construct, chart_deployment: Deployment, chart_resources: ChartResourceCollection):

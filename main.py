@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import kubeasy
-
+import json
+import yaml
 
 # ==== CHART PARAMETERS ====
 # These could be supplied in a number of ways.
@@ -26,8 +27,8 @@ easy_chart = kubeasy.EasyChart(name=name, namespace=namespace, environment=envir
 chart_container = easy_chart.add_container(name, image, release)
 
 # Open any ports the container needs.
-chart_container_internal_port = chart_container.add_port(internal_container_port)
-chart_container_external_port = chart_container.add_port(external_container_port)
+chart_container_internal_port = chart_container.add_port("internal", internal_container_port)
+chart_container_external_port = chart_container.add_port("external", external_container_port)
 
 
 # ==== SERVICE ====
