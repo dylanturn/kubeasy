@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import kubeasy
-import json
-import yaml
 
 # ==== CHART PARAMETERS ====
 # These could be supplied in a number of ways.
