@@ -11,7 +11,7 @@ from kubeasy.deployment import Deployment
 from kubeasy.container import Container
 from kubeasy.service import Service, ServicePort, ServiceType
 from kubeasy.ingress import Ingress, IngressPath
-from kubeasy.volume import Volume
+from kubeasy.volume import Volume, ConfigMap, EmptyDir
 from typing import Mapping
 
 
@@ -39,10 +39,20 @@ class EasyChart(object):
     self.deployment.add_container(new_container)
     return new_container
 
-  def add_volume(self, name: str, labels: Mapping[str, str]) -> Volume:
+  def include_volume(self, name: str, labels: Mapping[str, str]) -> Volume:
     new_volume = Volume(name, labels)
-    self.deployment.add_volume_mount(new_volume)
+    self.deployment.include_volume(new_volume)
     return new_volume
+
+  def include_config_map(self, name: str, config_name: str) -> ConfigMap:
+    new_config_map = ConfigMap(name=name, config_name=config_name)
+    self.deployment.include_volume(volume=new_config_map)
+    return new_config_map
+
+  def add_empty_dir(self, name: str, size_limit: str, use_memory: bool = False) -> EmptyDir:
+    new_empty_dir = EmptyDir(name=name, size_limit=size_limit, use_memory=use_memory)
+    self.deployment.include_volume(volume=new_empty_dir)
+    return new_empty_dir
 
   def add_service(self, service_name) -> Service:
     new_service = Service(name=service_name, deployment=self.deployment)

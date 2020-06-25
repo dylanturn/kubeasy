@@ -7,6 +7,7 @@ from kubeasy.utils.collections.chart_resource_collection import ChartResourceCol
 from kubeasy.container import Container
 from kubeasy.utils.collections.containers import Containers
 from kubeasy.volume import Volume
+from kubeasy.utils.collections.volumes import Volumes
 from kubeasy.utils.security import SecurityContext
 
 
@@ -18,8 +19,12 @@ class Deployment(object):
     label_selector = k8s.LabelSelector(match_labels=self.match_labels)
 
     # Generate the podspec templates for the deployment
-    podspec = k8s.PodSpec(containers=self.containers.render(chart))
-    podspec_template = k8s.PodTemplateSpec(metadata=object_meta, spec=podspec)
+    podspec = k8s.PodSpec(init_containers=self.init_containers.render(chart),
+                          containers=self.containers.render(chart),
+                          volumes=self.volumes.render(chart))
+
+    podspec_template = k8s.PodTemplateSpec(metadata=object_meta,
+                                           spec=podspec)
 
     # Use the podspec to create the deployment spec before finally returning the completed K8s Deployment.
     deployment_spec = k8s.DeploymentSpec(replicas=self.replicas, selector=label_selector, template=podspec_template)
@@ -42,7 +47,7 @@ class Deployment(object):
 
     self.init_containers = Containers()
     self.containers = Containers()
-    self.volumes = ChartResourceCollection()
+    self.volumes = Volumes()
 
     # Security Context
     self.security_context = SecurityContext()
@@ -111,6 +116,6 @@ class Deployment(object):
 
   # Volume Mounts
 
-  def add_volume_mount(self, volume: Volume) -> Volume:
-    self.volumes.add_resource(volume)
+  def include_volume(self, volume: Volume) -> Volume:
+    self.volumes.add_volume(volume)
     return volume

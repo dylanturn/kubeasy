@@ -25,6 +25,7 @@ class Ingress(Renderable):
     self.name = name
     self.tls = tls
     self.labels = labels
+    self.annotations = {}
     self.rules = []
     self.service_ports = []
     self.__load_default_configuration__()
@@ -45,8 +46,12 @@ class Ingress(Renderable):
     self.labels[key] = value
     return self
 
+  def annotate(self, key: str, value: str) -> Ingress:
+    self.annotations[key] = value
+    return self
+
   def __create_object_meta(self):
-    return k8s.ObjectMeta(name=self.name, labels=self.labels)
+    return k8s.ObjectMeta(name=self.name, labels=self.labels, annotations=self.annotations)
 
   def __create_ingress_tls(self, tls_hosts: list = []):
     if self.tls:

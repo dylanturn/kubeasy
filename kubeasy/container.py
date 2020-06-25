@@ -13,7 +13,9 @@ from kubeasy.utils.resource import Renderable
 
 
 class Container(Renderable):
+
   def __init__(self, name: str, image: str, tag: str):
+    print("start of container init")
     self.name = name
     self.image = image
     self.image_pull_policy = "Always"
@@ -23,6 +25,7 @@ class Container(Renderable):
     self.security_context = SecurityContext()
     self.resource_requirements = ContainerResources()
 
+    self.command = []
     self.env_variables = {}
 
     self.liveness_probe_path = None
@@ -30,7 +33,7 @@ class Container(Renderable):
     self.readiness_probe_path = None
     self.readiness_probe_port = None
 
-    self.volume_mounts = {}
+    self.volume_mounts = []
 
     self.__load_default_configuration__()
 
@@ -42,6 +45,11 @@ class Container(Renderable):
   def __load_enforced_configuration(self):
     pass
 
+  # Container Command
+  def set_command(self, command: list) -> Container:
+    self.command = command
+    return self
+
   # Environment Variables
 
   def set_env_variables(self, variables: dict[str]) -> Container:
@@ -50,6 +58,11 @@ class Container(Renderable):
 
   def add_env_variable(self, key: str, value: str) -> Container:
     self.env_variables[key] = value
+    return self
+
+  # === Volume Stuff ===
+  def mount_volume(self, name, mount_path, read_only=False) -> Container:
+    self.volume_mounts.append(k8s.VolumeMount(name=name, mount_path=mount_path, read_only=read_only))
     return self
 
   # === Security ===
@@ -86,8 +99,25 @@ class Container(Renderable):
 
   def render(self, chart: Chart) -> k8s.Container:
     self.__load_enforced_configuration()
+
+    if self.liveness_probe_path is not None and self.liveness_probe_port is not None:
+      liveness_probe = k8s.Probe(http_get=k8s.HttpGetAction(port=self.liveness_probe_port,
+                                                            path=self.liveness_probe_path))
+    else:
+      liveness_probe = None
+
+    if self.readiness_probe_port is not None and self.readiness_probe_port is not None:
+      readiness_probe = k8s.Probe(http_get=k8s.HttpGetAction(port=self.readiness_probe_port,
+                                                            path=self.readiness_probe_path))
+    else:
+      readiness_probe = None
+
     return k8s.Container(name=self.name,
                          image=f"{self.image}:{self.tag}",
                          ports=self.ports.render(),
                          security_context=self.security_context.render(),
-                         resources=self.resource_requirements.render())
+                         resources=self.resource_requirements.render(),
+                         volume_mounts=self.volume_mounts,
+                         command=self.command,
+                         liveness_probe=liveness_probe,
+                         readiness_probe=readiness_probe)
