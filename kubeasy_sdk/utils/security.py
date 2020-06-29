@@ -1,19 +1,22 @@
 from __future__ import annotations
+
+from cdk8s import Chart
+
 from imports import k8s
+from kubeasy_sdk.utils.resource import Rendered
 
 
-class SecurityContext(object):
+class SecurityContext(Rendered):
   def __init__(self, capabilities: dict = None, read_only_root_fs: bool = True, run_as_uid: int = 1000, run_as_gid: int = 1000, run_as_root: bool = False):
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
 
     self.capabilities = capabilities
     self.read_only_root_fs = read_only_root_fs
     self.run_as_uid = run_as_uid
     self.run_as_gid = run_as_gid
     self.run_as_non_root = run_as_root
-    self.__read_defaults__()
-
-  def __read_defaults__(self):
-    pass
 
   def set_capabilities(self, capabilities: dict = None) -> SecurityContext:
     if capabilities is None:
@@ -36,7 +39,7 @@ class SecurityContext(object):
     self.run_as_non_root = not run_as_root
     return self
 
-  def render(self) -> k8s.SecurityContext:
+  def render_k8s_resource(self, chart: Chart) -> k8s.SecurityContext:
     return k8s.SecurityContext(capabilities=self.capabilities,
                                privileged=False,
                                read_only_root_filesystem=self.read_only_root_fs,

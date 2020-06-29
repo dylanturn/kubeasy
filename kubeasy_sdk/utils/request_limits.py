@@ -1,20 +1,20 @@
 from __future__ import annotations
+
+from cdk8s import Chart
+
 from imports import k8s
+from kubeasy_sdk.utils.resource import Rendered
 
 
-class ContainerResources(object):
+class ContainerResources(Rendered):
 
   def __init__(self):
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
+
     self.requests = {}
     self.limits = {}
-    self.__read_defaults__()
-
-  def __read_defaults__(self):
-    self.add_request("cpu", "100m")
-    self.add_request("memory", "128Mi")
-
-    self.add_limit("cpu", "200m")
-    self.add_limit("memory", "256Mi")
 
   def add_request(self, resource_name: str, resource_quantity) -> ContainerResources:
     if (type(resource_quantity) is int) or (type(resource_quantity) is float):
@@ -46,5 +46,5 @@ class ContainerResources(object):
       self.add_limit(limit_key, limit_value)
     return self
 
-  def render(self) -> k8s.ResourceRequirements:
+  def render_k8s_resource(self, chart: Chart) -> k8s.ResourceRequirements:
     return k8s.ResourceRequirements(requests=self.requests, limits=self.limits)

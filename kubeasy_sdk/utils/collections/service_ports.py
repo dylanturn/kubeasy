@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List
 
 from imports import k8s
-from kubeasy.utils.networking.service_port import ServicePort
+from kubeasy_sdk.utils.networking.service_port import ServicePort
 
 
 class ServicePorts(List[k8s.ServicePort]):

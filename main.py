@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import kubeasy
+import kubeasy_sdk
 
 # ==== CHART PARAMETERS ====
 # These could be supplied in a number of ways.

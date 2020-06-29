@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from imports import k8s
 from cdk8s import Chart
-from kubeasy.volume import Volume
-from typing import Mapping
+from kubeasy_sdk.volume import Volume
 
 
 class Volumes(list):

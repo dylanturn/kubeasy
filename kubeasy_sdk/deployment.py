@@ -2,36 +2,21 @@ from __future__ import annotations
 from imports import k8s
 from cdk8s import Chart
 
-from kubeasy.utils.collections.chart_resource_collection import ChartResourceCollection
+from kubeasy_sdk.container import Container
+from kubeasy_sdk.utils.collections.containers import Containers
+from kubeasy_sdk.utils.resource import Rendered
+from kubeasy_sdk.volume import Volume
+from kubeasy_sdk.utils.collections.volumes import Volumes
+from kubeasy_sdk.utils.security import SecurityContext
 
-from kubeasy.container import Container
-from kubeasy.utils.collections.containers import Containers
-from kubeasy.volume import Volume
-from kubeasy.utils.collections.volumes import Volumes
-from kubeasy.utils.security import SecurityContext
 
-
-class Deployment(object):
-
-  def render(self, chart: Chart) -> Deployment:
-    # Create the metadata and label selectors for the deployment
-    object_meta = k8s.ObjectMeta(labels=self.labels)
-    label_selector = k8s.LabelSelector(match_labels=self.match_labels)
-
-    # Generate the podspec templates for the deployment
-    podspec = k8s.PodSpec(init_containers=self.init_containers.render(chart),
-                          containers=self.containers.render(chart),
-                          volumes=self.volumes.render(chart))
-
-    podspec_template = k8s.PodTemplateSpec(metadata=object_meta,
-                                           spec=podspec)
-
-    # Use the podspec to create the deployment spec before finally returning the completed K8s Deployment.
-    deployment_spec = k8s.DeploymentSpec(replicas=self.replicas, selector=label_selector, template=podspec_template)
-    k8s.Deployment(chart, 'deployment', metadata=k8s.ObjectMeta(name=self.name), spec=deployment_spec)
-    return self
+class Deployment(Rendered):
 
   def __init__(self, name: str, namespace: str, environment: str, replicas: int = 1):
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
+
     self.name = name
     self.namespace = namespace
     self.environment = environment
@@ -51,16 +36,6 @@ class Deployment(object):
 
     # Security Context
     self.security_context = SecurityContext()
-
-    # This is where certain provided values might be overridden.
-    self.__read_defaults__()
-
-  def __read_defaults__(self):
-    self.labels["app.kubernetes.io/name"] = self.name
-    self.labels["app.kubernetes.io/environment"] = self.environment
-
-    self.match_labels["app.kubernetes.io/name"] = self.name
-    self.match_labels["app.kubernetes.io/environment"] = self.environment
 
   def set_replicas(self, replicas: int) -> Deployment:
     self.replicas = replicas
@@ -119,3 +94,22 @@ class Deployment(object):
   def include_volume(self, volume: Volume) -> Volume:
     self.volumes.add_volume(volume)
     return volume
+
+  def render_k8s_resource(self, chart: Chart) -> Deployment:
+
+    # Create the metadata and label selectors for the deployment
+    object_meta = k8s.ObjectMeta(labels=self.labels)
+    label_selector = k8s.LabelSelector(match_labels=self.match_labels)
+
+    # Generate the podspec templates for the deployment
+    podspec = k8s.PodSpec(init_containers=self.init_containers.render(chart),
+                          containers=self.containers.render(chart),
+                          volumes=self.volumes.render(chart))
+
+    podspec_template = k8s.PodTemplateSpec(metadata=object_meta,
+                                           spec=podspec)
+
+    # Use the podspec to create the deployment spec before finally returning the completed K8s Deployment.
+    deployment_spec = k8s.DeploymentSpec(replicas=self.replicas, selector=label_selector, template=podspec_template)
+    k8s.Deployment(chart, 'deployment', metadata=k8s.ObjectMeta(name=self.name), spec=deployment_spec)
+    return self

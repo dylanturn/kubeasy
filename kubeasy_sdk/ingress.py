@@ -4,39 +4,37 @@ from cdk8s import Chart
 
 import jmespath
 
-from kubeasy.utils.networking.service_port import ServicePort
-from kubeasy.utils.resource import Renderable
+from kubeasy_sdk.utils.networking.service_port import ServicePort
+from kubeasy_sdk.utils.resource import Rendered
 
 
-class IngressPath(Renderable):
+class IngressPath(Rendered):
   def __init__(self, service_name: str, backend_port: int, path: str = None):
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
+
     self.name = service_name
     self.port = backend_port
     self.path = path
 
-  def render(self, chart: Chart) -> k8s.HttpIngressPath:
+  def render_k8s_resource(self, chart: Chart) -> k8s.HttpIngressPath:
     ingress_backend = k8s.IngressBackend(service_name=self.name, service_port=k8s.IntOrString.from_number(self.port))
     return k8s.HttpIngressPath(backend=ingress_backend, path=self.path)
 
 
-class Ingress(Renderable):
-
+class Ingress(Rendered):
   def __init__(self, name: str, tls: bool, labels: dict = None):
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
+
     self.name = name
     self.tls = tls
     self.labels = labels
     self.annotations = {}
     self.rules = []
     self.service_ports = []
-    self.__load_default_configuration__()
-
-  # Configuration defaults will be read here
-  def __load_default_configuration__(self):
-    pass  # TODO: This thing
-
-  # Configuration required by admins will be read here
-  def __load_enforced_configuration(self):
-    pass  # TODO: This thing
 
   def set_labels(self, labels: dict) -> Ingress:
     self.labels = labels
@@ -62,8 +60,7 @@ class Ingress(Renderable):
   def add_rule(self, host: str, backend_port: ServicePort, path: str = None):
     self.rules.append({"host": host, "path": path, "port": backend_port})
 
-  def render(self, chart: Chart) -> k8s.Ingress:
-    self.__load_enforced_configuration()
+  def render_k8s_resource(self, chart: Chart) -> k8s.Ingress:
     ingress_meta = self.__create_object_meta()
     ingress_tls = self.__create_ingress_tls()
 
@@ -94,12 +91,10 @@ class SimpleIngress(Ingress):
 
   def __init__(self, name: str, tls: bool, service_name: str, service_port: int, labels: dict = None):
     super().__init__(name, tls, labels)
-
     self.name = service_name
     self.port = service_port
 
-  def render(self, chart: Chart) -> k8s.Ingress:
-    self.__load_enforced_configuration()
+  def render_k8s_resource(self, chart: Chart) -> k8s.Ingress:
     ingress_meta = self.__create_object_meta()
     ingress_tls = self.__create_ingress_tls([self.name])
     ingress_backend = k8s.IngressBackend(service_name=self.name, service_port=k8s.IntOrString.from_number(self.port))

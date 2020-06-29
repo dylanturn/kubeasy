@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from imports import k8s
 from cdk8s import Chart
-from kubeasy.container import Container
+from kubeasy_sdk.container import Container
 from typing import Mapping
 
 
