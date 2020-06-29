@@ -1,14 +1,13 @@
 from __future__ import annotations
 from enum import Enum
-from typing import List
 
 from imports import k8s
 from cdk8s import Chart
 
-from kubeasy.deployment import Deployment
-from kubeasy.utils.resource import Renderable
-from kubeasy.utils.networking.service_port import ServicePort
-from kubeasy.utils.collections.service_ports import ServicePorts
+from kubeasy_sdk.deployment import Deployment
+from kubeasy_sdk.utils.resource import Rendered
+from kubeasy_sdk.utils.networking.service_port import ServicePort
+from kubeasy_sdk.utils.collections.service_ports import ServicePorts
 
 
 class ServiceType(Enum):
@@ -20,8 +19,12 @@ class ServiceType(Enum):
     return '{0}'.format(self.value)
 
 
-class Service(Renderable):
+class Service(Rendered):
   def __init__(self, name: str, deployment: Deployment):
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
+
     self.name = name
     self.deployment = deployment
 
@@ -31,20 +34,6 @@ class Service(Renderable):
     self.selector = {}
     self.service_type = ServiceType.CLUSTERIP
     self.ports = ServicePorts()
-    self.__load_default_configuration__()
-
-  # Configuration defaults will be read here
-  def __load_default_configuration__(self):
-    self.labels["app.kubernetes.io/name"] = self.name
-    self.labels["app.kubernetes.io/deployment"] = self.deployment.name
-
-    self.labels["app.kubernetes.io/environment"] = self.environment
-
-    self.selector = self.deployment.match_labels
-
-  # Configuration required by admins will be read here
-  def __load_enforced_configuration(self):
-    pass
 
   def set_type(self, service_type:  ServiceType) -> Service:
     self.service_type = service_type
@@ -73,8 +62,7 @@ class Service(Renderable):
     self.selector[selector_key] = selector_value
     return self
 
-  def render(self, chart: Chart) -> k8s.Service:
-    self.__load_enforced_configuration()
+  def render_k8s_resource(self, chart: Chart) -> k8s.Service:
     service_ports = ServicePort.render_port_list(self.ports)
     svc_spec = k8s.ServiceSpec(type=self.service_type.k8s_name(), ports=service_ports, selector=self.selector)
     object_meta = k8s.ObjectMeta(name=self.name, labels=self.labels)

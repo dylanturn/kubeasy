@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import List
-from kubeasy.utils.resource import Renderable
+from kubeasy_sdk.utils.resource import Rendered
 from cdk8s import Chart
 
 
@@ -15,11 +15,11 @@ class ChartResourceCollection(list):
         resource_collection.add_resource(resource)
     return resource_collection
 
-  def add_resource(self, resource: Renderable) -> ChartResourceCollection:
+  def add_resource(self, resource: Rendered) -> ChartResourceCollection:
     self.append(resource)
     return self
 
-  def get_resource(self, index) -> Renderable:
+  def get_resource(self, index) -> Rendered:
     return self[index]
 
   def render(self, chart: Chart):

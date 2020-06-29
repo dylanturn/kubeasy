@@ -1,21 +1,24 @@
 from __future__ import annotations
 
-from typing import List, Mapping
+from typing import Mapping
 
 from imports import k8s
 from cdk8s import Chart
 
-from kubeasy.utils.collections.container_ports import ContainerPorts
-from kubeasy.utils.request_limits import ContainerResources
-from kubeasy.utils.security import SecurityContext
-from kubeasy.utils.networking.container_port import ContainerPort
-from kubeasy.utils.resource import Renderable
+from kubeasy_sdk.utils.collections.container_ports import ContainerPorts
+from kubeasy_sdk.utils.request_limits import ContainerResources
+from kubeasy_sdk.utils.security import SecurityContext
+from kubeasy_sdk.utils.networking.container_port import ContainerPort
+from kubeasy_sdk.utils.resource import Rendered
 
 
-class Container(Renderable):
+class Container(Rendered):
 
   def __init__(self, name: str, image: str, tag: str):
-    print("start of container init")
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
+
     self.name = name
     self.image = image
     self.image_pull_policy = "Always"
@@ -35,15 +38,6 @@ class Container(Renderable):
 
     self.volume_mounts = []
 
-    self.__load_default_configuration__()
-
-  # Configuration defaults will be read here
-  def __load_default_configuration__(self):
-    pass
-
-  # Configuration required by admins will be read here
-  def __load_enforced_configuration(self):
-    pass
 
   # Container Command
   def set_command(self, command: list) -> Container:
@@ -97,8 +91,7 @@ class Container(Renderable):
     self.readiness_probe_port = port
     return self
 
-  def render(self, chart: Chart) -> k8s.Container:
-    self.__load_enforced_configuration()
+  def render_k8s_resource(self, chart: Chart) -> k8s.Container:
 
     if self.liveness_probe_path is not None and self.liveness_probe_port is not None:
       liveness_probe = k8s.Probe(http_get=k8s.HttpGetAction(port=self.liveness_probe_port,

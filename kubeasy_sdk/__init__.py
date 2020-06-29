@@ -5,13 +5,13 @@ import json
 from cdk8s import App, Chart
 from constructs import Construct
 
-from kubeasy.utils.collections.chart_resource_collection import ChartResourceCollection
-from kubeasy.utils.resource import Renderable
-from kubeasy.deployment import Deployment
-from kubeasy.container import Container
-from kubeasy.service import Service, ServicePort, ServiceType
-from kubeasy.ingress import Ingress, IngressPath
-from kubeasy.volume import Volume, ConfigMap, EmptyDir
+from kubeasy_sdk.utils.collections.chart_resource_collection import ChartResourceCollection
+from kubeasy_sdk.utils.resource import Rendered
+from kubeasy_sdk.deployment import Deployment
+from kubeasy_sdk.container import Container
+from kubeasy_sdk.service import Service, ServicePort, ServiceType
+from kubeasy_sdk.ingress import Ingress, IngressPath
+from kubeasy_sdk.volume import Volume, ConfigMap, EmptyDir
 from typing import Mapping
 
 
@@ -65,6 +65,7 @@ class EasyChart(object):
     return new_ingress
 
   def render(self) -> list:
+
     app = App()
     combined_resource_collection = ChartResourceCollection.combine([self.service_collection, self.ingress_collection])
     chart_json = self.__EasyChart(app, self.deployment, combined_resource_collection).to_json()

@@ -2,14 +2,21 @@ from __future__ import annotations
 
 from typing import List
 
+from cdk8s import Chart
+
 from imports import k8s
 
-from kubeasy.utils.networking.container_port import ContainerPort
+from kubeasy_sdk.utils.networking.container_port import ContainerPort
+from kubeasy_sdk.utils.resource import Rendered
 
 
-class ServicePort(object):
+class ServicePort(Rendered):
 
   def __init__(self, container_port: ContainerPort):
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
+
     self.service_name = None
     self.name = container_port.name
     self.protocol = container_port.protocol
@@ -19,7 +26,7 @@ class ServicePort(object):
     self.service_name = service_name
     return self
   
-  def render(self) -> k8s.ServicePort:
+  def render_k8s_resource(self, chart: Chart) -> k8s.ServicePort:
     cont_port_int_string = k8s.IntOrString.from_number(self.port)
     return k8s.ServicePort(name=self.name,
                            port=self.port,
