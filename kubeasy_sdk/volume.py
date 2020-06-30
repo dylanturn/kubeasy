@@ -23,16 +23,11 @@ class Volume(Rendered):
 class EmptyDir(Volume):
   def __init__(self, name: str, size_limit: str, use_memory: bool):
     super().__init__(name)
-
     self.use_memory = use_memory
     self.size_limit = size_limit
     self.medium_map = {False: None, True: 'memory'}
 
   def render_k8s_resource(self, chart: Chart) -> k8s.Volume:
-
-    # Before rendering the manifest we overwrite enforced settings.
-    self.__load_enforced_configuration__()
-
     volume_size = k8s.Quantity.from_string(self.size_limit)
     volume_source = k8s.EmptyDirVolumeSource(size_limit=volume_size, medium=self.medium_map[self.use_memory])
     return k8s.Volume(name=self.name, empty_dir=volume_source)

@@ -15,10 +15,6 @@ from kubeasy_sdk.utils.resource import Rendered
 class Container(Rendered):
 
   def __init__(self, name: str, image: str, tag: str):
-    func_locals = dict(locals())
-    del func_locals['self']
-    super().__init__(**func_locals)
-
     self.name = name
     self.image = image
     self.image_pull_policy = "Always"
@@ -37,6 +33,10 @@ class Container(Rendered):
     self.readiness_probe_port = None
 
     self.volume_mounts = []
+
+    func_locals = dict(locals())
+    del func_locals['self']
+    super().__init__(**func_locals)
 
 
   # Container Command
@@ -61,13 +61,16 @@ class Container(Rendered):
 
   # === Security ===
 
-  def set_resource_requirements(self, resource_requirements: ContainerResources) -> Container:
-    self.resource_requirements = resource_requirements
-    return self
-
   def set_security_context(self, security_context: SecurityContext) -> Container:
     self.security_context = security_context
     return self
+
+  # === Resource Limits and Requests ===
+  def set_resource_limit(self, resource_name: str, resource_quantity):
+    self.resource_requirements.add_limit(resource_name, resource_quantity)
+
+  def set_resource_request(self, resource_name: str, resource_quantity):
+    self.resource_requirements.add_request(resource_name, resource_quantity)
 
   # === Networking ===
 
