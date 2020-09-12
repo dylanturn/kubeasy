@@ -1,4 +1,5 @@
 .idea/
+*.ignore.*
 env/
 imports/
 Pipfile.lock
