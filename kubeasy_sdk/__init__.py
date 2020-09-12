@@ -4,7 +4,7 @@ import json
 
 from cdk8s import App, Chart
 from constructs import Construct
-
+from kubeasy_builder.build import build_chart
 from kubeasy_sdk.utils.collections.chart_resource_collection import ChartResourceCollection
 from kubeasy_sdk.utils.resource import Rendered
 from kubeasy_sdk.deployment import Deployment
@@ -66,9 +66,7 @@ class EasyChart(object):
 
   def render(self) -> list:
 
-    app = App()
-    combined_resource_collection = ChartResourceCollection.combine([self.service_collection, self.ingress_collection])
-    chart_json = self.__EasyChart(app, self.deployment, combined_resource_collection).to_json()
+    chart_json = build_chart.delay(self)
 
     yaml_manifest = ""
     for manifest in chart_json:
