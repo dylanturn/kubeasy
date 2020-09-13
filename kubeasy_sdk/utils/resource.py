@@ -9,8 +9,8 @@ from cdk8s import Chart
 ###########################
 # Configuration defaults will be read here
 def __load_default_configuration__(self, **kwargs):
-  print(f"Load default configs for class: {self.__class__.__name__}")
-  print(f"Instance KWARGS: {kwargs}")
+  #print(f"Load default configs for class: {self.__class__.__name__}")
+  #print(f"Instance KWARGS: {kwargs}")
 
   # Load the defaults for containers
   if self.__class__.__name__ == 'Container':
@@ -24,7 +24,7 @@ def __load_default_configuration__(self, **kwargs):
 ###########################
 # Configuration required by admins will be read here
 def __load_enforced_configuration__(self):
-  print(f"Load enforced configs for class: {self.__class__.__name__}")
+  #print(f"Load enforced configs for class: {self.__class__.__name__}")
 
   if self.__class__.__name__ == 'Deployment':
     self.labels["app.kubernetes.io/name"] = self.name
@@ -43,7 +43,8 @@ def __load_enforced_configuration__(self):
 ###########################
 # Perform any runtime validations we might have
 def __validate_resource__(self):
-  print(f"Perform validations for class: {self.__class__.__name__}")
+  #print(f"Perform validations for class: {self.__class__.__name__}")
+  pass
 
 
 class Rendered(object):

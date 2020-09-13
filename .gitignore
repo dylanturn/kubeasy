@@ -1,5 +1,6 @@
 .idea/
 *.ignore.*
+*.ignore.py
 env/
 imports/
 Pipfile.lock
