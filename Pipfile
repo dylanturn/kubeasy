@@ -13,4 +13,4 @@ celery = {version="== 4.4.6", index="pypi"}
 kubernetes = {version="== 11.0.0", index="pypi"}
 
 [requires]
-python_version = "3.8"
+python_version = "3"
