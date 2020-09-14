@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="kubeasy",
+    name="kubeasy-py",
     version="0.1.4",
     author="Dylan Turnbull",
     author_email="dylanturn@gmail.com",
