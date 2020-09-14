@@ -52,7 +52,7 @@ jobs:
         echo ::set-output name=tag::$(echo $VERSION | awk '{print tolower($0)}')
 
     - name: Build the Docker image
-      run: docker build ./github/actions/deploy_kubeasy_app --file Dockerfile --tag ${{steps.image_vars.outputs.repo}}:${{steps.image_vars.outputs.tag}}
+      run: docker build ./github/actions/deploy_kubeasy_app --tag ${{steps.image_vars.outputs.repo}}:${{steps.image_vars.outputs.tag}}
 
     - name: Push the Docker image
       run: docker push ${{steps.image_vars.outputs.repo}}:${{steps.image_vars.outputs.tag}}
