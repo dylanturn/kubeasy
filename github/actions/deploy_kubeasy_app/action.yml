@@ -1,0 +1,20 @@
+name: 'Kubeasy Deployment'
+description: 'Deploy some easy kubernetes!'
+inputs:
+  kubeasy_version:
+    description: 'The version of Kubeasy that should be used.'
+    required: true
+    default: '0.1.2'
+  deployment_file:
+    description: 'The python file that contains the Kubeasy deployment'
+    required: true
+  base64_kube_config:
+    description: 'The base64 encoded contents of a .kube/config file'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.kubeasy_version }}
+    - ${{ inputs.deployment_file }}
+    - ${{ inputs.base64_kube_config }}

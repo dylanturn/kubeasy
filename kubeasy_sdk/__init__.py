@@ -1,11 +1,5 @@
 from __future__ import annotations
 
-import os
-from kubernetes import client, config
-from kubernetes import utils
-from tempfile import mkstemp
-
-import base64
 import yaml
 import json
 
@@ -19,6 +13,7 @@ from kubeasy_sdk.service import Service, ServicePort, ServiceType
 from kubeasy_sdk.ingress import Ingress, IngressPath
 from kubeasy_sdk.volume import Volume, ConfigMap, EmptyDir
 from typing import Mapping
+
 
 class EasyChart(object):
   def __init__(self, name: str, namespace: str, environment: str, release: str):
@@ -69,8 +64,7 @@ class EasyChart(object):
     self.ingress_collection.add_resource(new_ingress)
     return new_ingress
 
-  def render(self, deploy: bool = False, k8s_config_base64: str = None, namespace: str =None) -> list:
-
+  def render(self) -> list:
     app = App()
     combined_resource_collection = ChartResourceCollection.combine([self.service_collection, self.ingress_collection])
 
@@ -79,43 +73,7 @@ class EasyChart(object):
     yaml_manifest = ""
     for manifest in chart_json:
       yaml_manifest += f"---\n{yaml.dump(yaml.load(json.dumps(manifest), Loader=yaml.FullLoader))}"
-
-    if deploy:
-      self.deploy_to_k8s(k8s_config_base64=k8s_config_base64, namespace=namespace)
-
     return yaml_manifest
-
-  def deploy_to_k8s(self, k8s_config_base64: str, namespace: str):
-
-    if (k8s_config_base64 is None) or (namespace is None):
-      return
-
-    # Create the temp file.
-    fd, k8s_temp_config = mkstemp()
-
-    # Use a context manager to open the file at that path and close it again
-    with open(k8s_temp_config, 'w') as f:
-      # Decode and write the Kubernetes config to the file.
-      f.write(base64.b64decode(k8s_config_base64))
-
-    config.load_kube_config(config_file=k8s_temp_config)
-    api = client.ApiClient()
-    try:
-      utils.create_from_yaml(api, k8s_temp_config, namespace=namespace)
-    except utils.FailToCreateError as e:
-      self.skip_if_already_exists(e)
-
-    # close the file descriptor
-    os.close(fd)
-
-    def skip_if_already_exists(e):
-      import json
-      # found in https://github.com/kubernetes-client/python/blob/master/kubernetes/utils/create_from_yaml.py#L165
-      info = json.loads(e.api_exceptions[0].body)
-      if info.get('reason').lower() == 'alreadyexists':
-        pass
-      else:
-        raise e
 
   class __EasyChart(Chart):
     def __init__(self, scope: Construct, chart_deployment: Deployment, chart_resources: ChartResourceCollection):
