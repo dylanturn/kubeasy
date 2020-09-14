@@ -19,4 +19,4 @@ pipenv install
 echo ${BASE64_KUBE_CONFIG} | base64 -d > ./kubeconfig
 
 # Generate and deploy the manifest
-pipenv run python3 ./${DEPLOYMENT_FILE} | kubectl apply --kubeconfig ./kubeconfig -f -
+pipenv run python3 ${DEPLOYMENT_FILE} | kubectl apply --kubeconfig ./kubeconfig -f -
