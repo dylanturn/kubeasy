@@ -30,6 +30,8 @@ jobs:
         # Set variables that can be used in other steps.
         echo ::set-output name=repo::$(echo $IMAGE_ID | awk '{print tolower($0)}')
         echo ::set-output name=tag::$(echo $VERSION | awk '{print tolower($0)}')
+
+
     - name: Build the Docker image
       run: docker build ./github/actions/deploy_kubeasy_app --build-arg KUBEASY_VERSION=${{steps.image_vars.outputs.tag}} --tag ${{steps.image_vars.outputs.repo}}:${{steps.image_vars.outputs.tag}}
     - name: Push the Docker image

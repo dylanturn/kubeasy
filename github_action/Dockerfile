@@ -13,9 +13,9 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL
     chmod +x ./kubectl &&\
     mv ./kubectl /usr/local/bin/kubectl
 
-RUN curl -L https://github.com/dylanturn/kubeasy/archive/v$KUBEASY_VERSION.tar.gz --output kubeasy-$KUBEASY_VERSION.tar.gz &&\
-    tar -xvf kubeasy-$KUBEASY_VERSION.tar.gz --strip 1 &&\
-    pipenv install
+# Upgrade pip and install Kubeasy
+RUN pip install --upgrade pip &&\
+    pip install kubeasy-py==$KUBEASY_VERSION
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY entrypoint.sh /entrypoint.sh

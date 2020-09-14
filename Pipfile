@@ -3,13 +3,14 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[dev-packages]
-
 [packages]
-cdk8s = {version="== 0.26.0", index="pypi"}
-jmespath = {version="== 0.10.0", index="pypi"}
-PyYAML = {version="== 5.3.1", index="pypi"}
-celery = {version="== 4.4.6", index="pypi"}
+"cdk8s" = {version="== 0.26.0", index="pypi"}
+"jmespath" = {version="== 0.10.0", index="pypi"}
+"PyYAML" = {version="== 5.3.1", index="pypi"}
+"celery" = {version="== 4.4.6", index="pypi"}
+
+[dev-packages]
+"toml" = "*"
 
 [requires]
 python_version = "3"
