@@ -50,7 +50,7 @@ jobs:
         twine upload  dist/* --verbose
 
     - name: Build the Docker image
-      run: docker build ./github_action --build-arg KUBEASY_VERSION=${{steps.image_vars.outputs.tag}} --tag ${{steps.image.outputs.path}}:${{steps.release.outputs.version}}
+      run: docker build ./github_action --build-arg KUBEASY_VERSION=${{steps.release.outputs.version}} --tag ${{steps.image.outputs.path}}:${{steps.release.outputs.version}}
 
     - name: Login to github docker Registry
       run: docker login docker.pkg.github.com -u dylanturn -p ${{ secrets.GITHUB_TOKEN }}
