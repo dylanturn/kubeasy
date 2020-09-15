@@ -15,7 +15,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL
 
 # Upgrade pip and install Kubeasy
 RUN pip install --upgrade pip &&\
-    pip install kubeasy-py==$KUBEASY_VERSION
+    pip install kubeasy-sdk==$KUBEASY_VERSION
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY entrypoint.sh /entrypoint.sh
