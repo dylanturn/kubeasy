@@ -6,7 +6,8 @@ name: Package and publish new Kubeasy releases
 on:
   release:
     types: [created]
-
+env:
+  IMAGE_NAME: kubeasy
 jobs:
   deploy:
 
