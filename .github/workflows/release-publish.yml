@@ -1,7 +1,7 @@
 # This workflows will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
-name: Package and publish Kubeasy to PyPi
+name: Package and publish new Kubeasy releases
 
 on:
   release:
@@ -51,6 +51,9 @@ jobs:
 
     - name: Build the Docker image
       run: docker build ./github_action --build-arg KUBEASY_VERSION=${{steps.image_vars.outputs.tag}} --tag ${{steps.image.outputs.path}}:${{steps.release.outputs.version}}
+
+    - name: Login to github docker Registry
+      run: docker login docker.pkg.github.com -u dylanturn -p ${{ secrets.GITHUB_TOKEN }}
 
     - name: Push the Docker image
       run: docker push ${{steps.image.outputs.path}}:${{steps.release.outputs.version}}
