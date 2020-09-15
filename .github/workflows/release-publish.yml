@@ -24,7 +24,7 @@ jobs:
       run: |
         # Construct an image id and includes the repo.
         IMAGE_URL=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-        echo ::set-output name=path::$(echo IMAGE_URL | awk '{print tolower($0)}')
+        echo ::set-output name=path::$(echo $IMAGE_URL | awk '{print tolower($0)}')
 
     - name: Get and set the release version
       id: release
