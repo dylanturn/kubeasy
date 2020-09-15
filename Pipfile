@@ -6,7 +6,7 @@ verify_ssl = true
 [packages]
 "cdk8s" = {version="== 0.26.0", index="pypi"}
 "jmespath" = {version="== 0.10.0", index="pypi"}
-"PyYAML" = {version="== 5.3.1", index="pypi"}
+"pyyaml" = {version="== 5.3.1", index="pypi"}
 "celery" = {version="== 4.4.6", index="pypi"}
 
 [dev-packages]

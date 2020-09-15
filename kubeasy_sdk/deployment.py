@@ -26,7 +26,7 @@ class Deployment(Rendered):
     self.match_labels = {}
 
     self.image_pull_policy = None
-    self.image_pull_secret = None
+    self.image_pull_secrets = []
 
     self.pod_fs_gid = None
 
@@ -69,8 +69,8 @@ class Deployment(Rendered):
     self.image_pull_policy = pull_policy
     return self
 
-  def set_image_pull_secret(self, pull_secret: str) -> Deployment:
-    self.image_pull_secret = pull_secret
+  def add_image_pull_secret(self, pull_secret: str) -> Deployment:
+    self.image_pull_secrets.append(k8s.LocalObjectReference(name=pull_secret))
     return self
 
   def set_pod_fs_gid(self, pod_fs_gid: int) -> Deployment:
@@ -103,6 +103,7 @@ class Deployment(Rendered):
 
     # Generate the podspec templates for the deployment
     podspec = k8s.PodSpec(init_containers=self.init_containers.render(chart),
+                          image_pull_secrets=self.image_pull_secrets,
                           containers=self.containers.render(chart),
                           volumes=self.volumes.render(chart))
 

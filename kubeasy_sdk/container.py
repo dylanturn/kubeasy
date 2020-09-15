@@ -18,7 +18,6 @@ class Container(Rendered):
     self.name = name
     self.image = image
     self.image_pull_policy = "Always"
-    self.image_pull_secret = None
     self.tag = tag
     self.ports = ContainerPorts()
     self.security_context = SecurityContext()

@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="kubeasy-py",
-    version=os.getenv('KUBEASY_VERSION', "v0.0.0"),
+    name="kubeasy-sdk",
+    version=os.getenv('KUBEASY_VERSION', "v0.1.22"),
     author="Dylan Turnbull",
     author_email="dylanturn@gmail.com",
     description="Kubernetes made easy!",
