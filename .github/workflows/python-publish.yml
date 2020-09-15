@@ -38,18 +38,16 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
         pip install setuptools wheel twine requirementslib
 
     - name: Build and publish
       env:
-        KUBEASY_VERSION: ${{steps.release.outputs.version}}
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        KUBEASY_VERSION: ${{ steps.release.outputs.version }}
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel
-        echo "DIST LS: $(ls dist/*)"
-        twine upload dist/* --verbose
+        twine upload  dist/* --verbose
 
     - name: Build the Docker image
       run: docker build ./github_action --build-arg KUBEASY_VERSION=${{steps.image_vars.outputs.tag}} --tag ${{steps.image.outputs.path}}:${{steps.release.outputs.version}}
